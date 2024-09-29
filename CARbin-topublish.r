@@ -106,7 +106,7 @@
   vaccpct = (0:10)/10        # vacc.proportion to use in ypred
   
   M = 2000      # M*Nskip = 1000 takes about 47 sec;    a quality run would be M = 2000, Nskip = 100
-  Nskip = 100     
+  Nskip = 200     
   burnin = M*0.2;   M10 = M %/% 10
   
   phihist = matrix(0,M,K); predhist = matrix(0,M,K); sthist = matrix(0,M,nst)
@@ -266,21 +266,35 @@ plot(betahist[50:M,1],betahist[50:M,2], col=rgb((50:M)/M,0, 1 - (50:M)/M))
      ylab("Projected total death")
    
   
-    PopFactor*(mean(TotDhist[rnge,1]) - sum(Y))   # total lives saved
+    PopFactor*(mean(TotDhist[rnge,1]) - sum(Y))   # total lives saved	
+	PopFactor*(c(CI.TotD[1,1], CI.TotD[2,1]) - sum(Y))   # 95% CI
    
- 
-   # xaxis PostMean    X2.5.    X97.5.
-# 1      0 995854.7 891489.0 1104260.9
-# 2     10 809696.4 737195.3  901680.8
-# 3     20 658411.4 601578.8  718577.8
-# 4     30 533786.2 494922.0  581735.7
-# 5     40 434932.8 404298.3  476054.3
-# 6     50 354091.6 327107.3  385677.4
-# 7     60 287838.3 265429.6  316609.1
-# 8     70 233621.1 214481.8  259242.8
-# 9     80 190133.7 171505.4  212118.9
-# 10    90 154407.4 138184.8  172849.2
-# 11   100 125798.6 110310.8  143277.9
- 
+ # > graph_data
+   # xaxis PostMean     X2.5.   X97.5.
+# 1      0 828627.0 755112.77 907216.8
+# 2     10 671916.1 624356.37 721255.1
+# 3     20 544918.6 517240.53 573860.8
+# 4     30 441889.3 427874.63 456345.4
+# 5     40 358401.6 353766.06 363301.5
+# 6     50 290681.2 287999.40 293678.9
+# 7     60 235789.7 229125.23 242897.6
+# 8     70 191238.8 182140.19 201083.6
+# 9     80 155129.4 144669.90 166243.6
+# 10    90 125849.9 115287.90 137536.4
+# 11   100 102124.9  91624.38 113775.4
 
-
+ 
+   # calculation of lives saved per 1,000 vaccinations 
+   
+   beta1 = -2.08     # use this estimate, or the 95% CI bounds from Table~1, (-2.29, -1.91)
+                     #   ==> (1.71, 2.01) lives saved per 1000 vacc.
+   d.fac = exp(beta1*0.10)    # decrease factor when vaccinations are up by 10%
+   death.rate = sum(Y)/sum(cnew3$TotalPop)
+   (saved.per.1000vac = death.rate*(1 - d.fac)*10000)  
+             # multiply by 10,000 vaccinations, accounting for 10% = 1000 extra vaccinations
+   
+   
+   
+   
+   
+   
